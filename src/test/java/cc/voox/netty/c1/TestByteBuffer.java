@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
-import java.io.InputStream;
+
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+import static cc.voox.util.ByteBufferUtils.debugAll;
 
 
 @Slf4j
@@ -17,6 +18,19 @@ public class TestByteBuffer {
     void test1() {
         log.info("hello: {}, study {}", "TJ", "netty");
     }
+    @Test
+    void testBuffer2() {
+        ByteBuffer buffer = ByteBuffer.allocate(10);
+        buffer.put((byte) 0x61);
+        buffer.put((byte) 0x62);
+        debugAll(buffer);
+        log.info("get by index 1 -> {}", buffer.get(1));
+        debugAll(buffer);
+        buffer.flip();
+        log.info("get by index 1 -> {}", buffer.get());
+        debugAll(buffer);
+    }
+
 
     @Test
     void testBuffer() {
