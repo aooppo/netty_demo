@@ -3,7 +3,6 @@ package cc.voox.netty;
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutionException;
@@ -24,12 +23,7 @@ public class NettyFutureTest {
             return "test~";
         });
 
-        future.addListener(new GenericFutureListener<Future<? super String>>() {
-            @Override
-            public void operationComplete(Future<? super String> future) throws Exception {
-                log.info("{} in listener}", future.getNow());
-            }
-        });
+        future.addListener(future1 -> log.info("{} in listener}", future1.getNow()));
         log.info("wait");
         log.info("{} async}", future.getNow());
         log.info("{}", future.get());
