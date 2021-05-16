@@ -72,7 +72,7 @@ public class TestRedis {
                     })
                     .connect("127.0.0.1", 6379)
                     .sync();
-            future.channel().close().sync();
+            future.channel().closeFuture().sync();
 
         } catch (Exception ex) {
             ex.printStackTrace();
