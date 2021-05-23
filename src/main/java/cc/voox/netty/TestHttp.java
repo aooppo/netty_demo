@@ -3,15 +3,20 @@ package cc.voox.netty;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 
 @Slf4j
 public class TestHttp {
@@ -33,10 +38,15 @@ public class TestHttp {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             ch.pipeline().addLast(new HttpServerCodec());
-                            ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+                            ch.pipeline().addLast(new SimpleChannelInboundHandler<HttpRequest>() {
+
+
                                 @Override
-                                public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                    log.info("{}", msg.getClass());
+                                protected void channelRead0(ChannelHandlerContext channelHandlerContext, HttpRequest httpRequest) throws Exception {
+                                    DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.OK);
+                                    response.headers().set(CONTENT_LENGTH, "Hi, Netty.".getBytes().length);
+                                    response.content().writeBytes("Hi, Netty.".getBytes());
+                                    channelHandlerContext.writeAndFlush(response);
                                 }
                             });
 
